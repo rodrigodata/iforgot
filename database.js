@@ -1,8 +1,14 @@
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://iforgot_app:<4kvf4csIrNlOwSDh>@iforgotcl-krqge.mongodb.net/iforgot?retryWrites=true";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect(err => {
-  const collection = client.db("iforgot").collection("senhasGeradas");
-  console.log(collection);
-  client.close();
+/* */
+const mongoose = require("mongoose");
+
+/* Seta variavel de ambiente com string do banco de dados */
+const uri = process.env.DB_HOST;
+
+/* Caso possua URL configurada */
+if (uri) {
+    mongoose.connect(process.env.MONGODB_URI);
+}
+
+var server = app.listen(process.env.PORT || 3000, function() {
+    console.log("Listening on port " + server.address().port);
 });

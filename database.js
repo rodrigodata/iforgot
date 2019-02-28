@@ -8,7 +8,7 @@ const uri = process.env.DB_HOST;
 if (uri) {
     mongoose
         .connect(uri, {useNewUrlParser: true})
-        .then((conection) => {
+        .then(() => {
             console.log('conectado ao banco de dados...');
         })
         .catch((err) => {

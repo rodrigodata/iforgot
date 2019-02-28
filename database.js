@@ -1,14 +1,17 @@
 /* */
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 /* Seta variavel de ambiente com string do banco de dados */
 const uri = process.env.DB_HOST;
 
 /* Caso possua URL configurada */
 if (uri) {
-    mongoose.connect(process.env.MONGODB_URI);
+    mongoose
+        .connect(uri, {useNewUrlParser: true})
+        .then((conection) => {
+            console.log('conectado ao banco de dados...');
+        })
+        .catch((err) => {
+            console.log(err.errors[0].err);
+        });
 }
-
-var server = app.listen(process.env.PORT || 3000, function() {
-    console.log("Listening on port " + server.address().port);
-});

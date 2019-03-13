@@ -2,6 +2,10 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
+/* Importação de constants */
+const AppConstants = require('../constants/app');
+
+/* Schema referente a criacao de uma senha */
 var SenhaSchema = new mongoose.Schema(
     {
         usuario: {
@@ -13,6 +17,10 @@ var SenhaSchema = new mongoose.Schema(
         descricao: {
             type: String,
             lowercase: true,
+            required: [true, 'não pode ser vazio']
+        },
+        senha: {
+            type: String,
             required: [true, 'não pode ser vazio']
         },
         tipoNotificacao: {
@@ -33,6 +41,19 @@ SenhaSchema.methods.formataRespostaJSON = function() {
         tipoNotificacao: this.tipoNotificacao,
         descricaoNotificacao: this.descricaoNotificacao
     };
+};
+
+/* Método responsável em gerar senha aleatóriamente. */
+SenhaSchema.methods.geradorSenha = function(senhaTamanhoCustomizado) {
+    const senhaDicionario = AppConstants.DICIONARIO || null;
+    const senhaTamanho = senhaTamanhoCustomizado || 15;
+
+    return Array(senhaTamanho)
+        .fill(senhaDicionario)
+        .map(function(x) {
+            return x[Math.floor(Math.random() * x.length)];
+        })
+        .join('');
 };
 
 mongoose.model('Senha', SenhaSchema);

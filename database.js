@@ -2,14 +2,14 @@
 const mongoose = require('mongoose');
 
 /* Seta variavel de ambiente com string do banco de dados */
-const uri = process.env.DB_HOST;
+const AppConstants = require('./app/constants/app');
 
 /* Caso possua URL configurada */
-if (uri) {
+if (AppConstants.DB_HOST) {
     mongoose
-        .connect(uri, {useNewUrlParser: true})
+        .connect(AppConstants.DB_HOST, {useNewUrlParser: true})
         .then(() => {
-            console.log('conectado ao banco de dados...');
+            console.log('Conexão estabelecida com o banco de dados');
         })
         .catch((err) => {
             console.log(err.errors[0].err);

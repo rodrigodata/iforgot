@@ -1,8 +1,17 @@
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://iforgot_app:<4kvf4csIrNlOwSDh>@iforgotcl-krqge.mongodb.net/iforgot?retryWrites=true";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect(err => {
-  const collection = client.db("iforgot").collection("senhasGeradas");
-  console.log(collection);
-  client.close();
-});
+/* */
+const mongoose = require('mongoose');
+
+/* Seta variavel de ambiente com string do banco de dados */
+const AppConstants = require('./app/constants/app');
+
+/* Caso possua URL configurada */
+if (AppConstants.DB_HOST) {
+    mongoose
+        .connect(AppConstants.DB_HOST, {useNewUrlParser: true})
+        .then(() => {
+            console.log('Conexão estabelecida com o banco de dados');
+        })
+        .catch((err) => {
+            console.log(err.errors[0].err);
+        });
+}

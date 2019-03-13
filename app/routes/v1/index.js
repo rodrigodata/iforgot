@@ -1,7 +1,7 @@
 var router = require('express').Router();
 
 /* Importação de rotas principais. Arquivos em que contenham ela serão rotas "filhas". */
-router.use('/evento', require('./evento'));
+router.use('/evento', require('./evento/evento'));
 
 router.use(function(err, req, res, next) {
     if (err.name === 'ValidationError') {

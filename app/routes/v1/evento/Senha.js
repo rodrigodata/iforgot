@@ -1,21 +1,27 @@
+/* Importação de dependencias */
 const mongoose = require('mongoose');
 const router = require('express').Router();
+
+/* Importação de middlewares */
+const SchemaValidator = require('../../../middlewares/SchemaValidation');
+
+/* Importação de Models */
 const Senha = mongoose.model('Senha');
 
-router.post('/senha', (req, res, next) => {
-    var body = req.body;
-    var senha = new Senha();
+router.post('/senha', SchemaValidator(true), (req, res, next) => {
+    let body = req.body;
 
     if (!body.usuario)
-        return res
-            .status(422)
-            .json({errors: {usuario: 'Valor não pode ser em branco ou nulo.'}});
+        return res.status(400).json({
+            errors: {usuario: 'Valor não pode ser em branco ou nulo.'}
+        });
 
     if (!body.descricao)
-        return res
-            .status(422)
-            .json({errors: {usuario: 'Valor não pode ser em branco ou nulo.'}});
+        return res.status(400).json({
+            errors: {usuario: 'Valor não pode ser em branco ou nulo.'}
+        });
 
+    let senha = new Senha();
     senha.senha = senha.geradorSenha();
     senha.usuario = body.usuario;
     senha.descricao = body.descricao;

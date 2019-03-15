@@ -7,6 +7,7 @@ const SenhaSchema = Joi.object({
         .lowercase()
         .required(),
     descricao: Joi.string().required(),
+    mfa: Joi.boolean().required(),
     tipoNotificacao: Joi.number(),
     descricaoNotificacao: Joi.string()
 });

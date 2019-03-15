@@ -11,13 +11,15 @@ var SenhaSchema = new mongoose.Schema(
     {
         usuario: {
             type: String,
-            lowercase: true,
             required: [true, 'não pode ser vazio'],
             createIndexes: true
         },
         descricao: {
             type: String,
-            lowercase: true,
+            required: [true, 'não pode ser vazio']
+        },
+        mfa: {
+            type: Boolean,
             required: [true, 'não pode ser vazio']
         },
         salt: {
@@ -44,6 +46,7 @@ SenhaSchema.methods.formataRespostaJSON = function() {
     return {
         usuario: this.usuario,
         descricao: this.descricao,
+        mfa: this.mfa,
         tipoNotificacao: this.tipoNotificacao,
         descricaoNotificacao: this.descricaoNotificacao
     };
@@ -54,6 +57,7 @@ SenhaSchema.methods.formataRespostaJSON = function() {
  * Usamos o Salt para gerar a hash, juntamente com a senha gerada e outras configurações.
  */
 SenhaSchema.methods.geradorSaltHash = function(senha) {
+    /* Ver mais detalhes em https://nodejs.org/api/crypto.html#crypto_crypto_randombytes_size_callback */
     this.salt = crypto.randomBytes(16).toString('hex');
     this.hash = crypto
         .pbkdf2Sync(senha, this.salt, 10000, 512, 'sha512')

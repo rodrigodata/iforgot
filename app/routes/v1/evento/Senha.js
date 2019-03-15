@@ -5,55 +5,19 @@ const router = require('express').Router();
 /* Importação de middlewares */
 const SchemaValidator = require('../../../middlewares/SchemaValidation');
 
-/* Importação de Models */
-const Senha = mongoose.model('Senha');
+/* Importação Controllers */
+const SenhaController = require('../../../controllers/evento/Senha');
 
-router.post('/senha', SchemaValidator(true), (req, res, next) => {
-    let body = req.body;
+/* Responsável pela criação do registro de senha e pela busca páginada de registros */
+router
+    .route('/senha')
+    .get()
+    .post(SchemaValidator(true), SenhaController.criar);
 
-    if (!body.usuario)
-        return res.status(400).json({
-            errors: {usuario: 'Valor não pode ser em branco ou nulo.'}
-        });
-
-    if (!body.descricao)
-        return res.status(400).json({
-            errors: {usuario: 'Valor não pode ser em branco ou nulo.'}
-        });
-
-    let senha = new Senha();
-    /* Gera Salt e Hash */
-    senha.geradorSenha();
-    senha.usuario = body.usuario;
-    senha.descricao = body.descricao;
-    senha.tipoNotificacao = body.tipoNotificacao;
-    /* TODO: Verificar se é necessário informar descrição de notificação sendo que é passado o id de notificação. */
-    senha.descricaoNotificacao = body.descricaoNotificacao;
-
-    senha
-        .save()
-        .then(() => {
-            return res.status(201).send({
-                ...senha.formataRespostaJSON()
-            });
-        })
-        .catch(next);
-});
-
-router.get('/senha/:id', (req, res, next) => {
-    if (!req.params.id)
-        return res.status(400).json({
-            errors: {id: 'Valor não pode ser em branco ou nulo.'}
-        });
-
-    const id = req.params.id;
-    Senha.findById(id)
-        .then(function(user) {
-            return res.status(200).send({
-                ...user.formataRespostaJSON()
-            });
-        })
-        .catch(next);
-});
+/* Responsável pela busca e update de um determinado registro de senha a partir do seu id */
+router
+    .route('/senha/:id')
+    .get(SenhaController.buscarPorId)
+    .put();
 
 module.exports = router;

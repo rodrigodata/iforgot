@@ -1,6 +1,7 @@
 /* Importação de dependencias */
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
+const crypto = require('crypto');
 
 /* Importação de constants */
 const AppConstants = require('../constants/app');
@@ -19,9 +20,14 @@ var SenhaSchema = new mongoose.Schema(
             lowercase: true,
             required: [true, 'não pode ser vazio']
         },
-        senha: {
+        salt: {
             type: String,
             required: [true, 'não pode ser vazio']
+        },
+        hash: {
+            type: String,
+            required: [true, 'não pode ser vazio'],
+            maxlength: 1024
         },
         tipoNotificacao: {
             type: Number
@@ -43,17 +49,30 @@ SenhaSchema.methods.formataRespostaJSON = function() {
     };
 };
 
+/**
+ * Método responsável por criar o Salt e a Hash de senha.
+ * Usamos o Salt para gerar a hash, juntamente com a senha gerada e outras configurações.
+ */
+SenhaSchema.methods.geradorSaltHash = function(senha) {
+    this.salt = crypto.randomBytes(16).toString('hex');
+    this.hash = crypto
+        .pbkdf2Sync(senha, this.salt, 10000, 512, 'sha512')
+        .toString('hex');
+};
+
 /* Método responsável em gerar senha aleatóriamente. */
 SenhaSchema.methods.geradorSenha = function(senhaTamanhoCustomizado) {
-    const senhaDicionario = AppConstants.DICIONARIO || null;
+    const senhaDicionario = AppConstants.DICIONARIO;
     const senhaTamanho = senhaTamanhoCustomizado || 15;
 
-    return Array(senhaTamanho)
-        .fill(senhaDicionario)
-        .map(function(x) {
-            return x[Math.floor(Math.random() * x.length)];
-        })
-        .join('');
+    this.geradorSaltHash(
+        Array(senhaTamanho)
+            .fill(senhaDicionario)
+            .map(function(x) {
+                return x[Math.floor(Math.random() * x.length)];
+            })
+            .join('')
+    );
 };
 
 mongoose.model('Senha', SenhaSchema);

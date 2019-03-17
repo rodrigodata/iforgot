@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 require('./database');
 
 /* Importação dos models */
-require('./app/models/Senha');
+require('./app/models');
 
 /* Configurando para usar rotas */
 app.use(require('./app/routes'));

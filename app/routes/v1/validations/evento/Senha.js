@@ -2,7 +2,7 @@
 const Joi = require('Joi');
 
 /* Validação da rota */
-const SenhaSchema = Joi.object({
+const CriarSenhaSchema = Joi.object({
     usuario: Joi.string()
         .lowercase()
         .required(),
@@ -13,5 +13,5 @@ const SenhaSchema = Joi.object({
 });
 
 module.exports = {
-    '/senha': SenhaSchema
+    '/senha': CriarSenhaSchema
 };

@@ -1,6 +1,6 @@
 /* */
-const mongoose = require('mongoose');
-const Senha = mongoose.model('Senha');
+const Mongoose = require('mongoose');
+const Senha = Mongoose.model('Senha');
 
 /* Controller responsável pela geração de senha */
 exports.criar = function(req, res, next) {

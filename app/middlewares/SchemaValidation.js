@@ -3,7 +3,7 @@ const _ = require('lodash');
 const Joi = require('joi');
 
 /* Importação de Schemas */
-const Schemas = require('../routes/v1/evento/validations/index');
+const Schemas = require('../routes/v1/validations');
 
 /* TODO: Melhorar validação de Schemas. Permitir mensagens customizadas. Tentar simplificar e organizar melhor validações Joi. */
 module.exports = (useJoiError = false) => {
@@ -25,8 +25,8 @@ module.exports = (useJoiError = false) => {
     };
 
     return (req, res, next) => {
+        let body = req.body;
         const rota = req.route.path;
-        const body = req.body;
         const metodo = req.method.toLowerCase();
 
         /* TODO: Verificar se será necessario responder com status 405 para métodos não permitidos. */
@@ -65,20 +65,20 @@ module.exports = (useJoiError = false) => {
                                 }
                             };
 
-                            // Custom Error
+                            /* Formatação de erro customizada */
                             const CustomError = {
                                 status: 'failed',
                                 error:
                                     'Invalid request data. Please review request and try again.'
                             };
 
-                            // Send back the JSON error response
                             res.status(422).json(
                                 _useJoiError ? JoiError : CustomError
                             );
                         } else {
-                            // Replace req.body with the data after Joi validation
-                            req.body = data;
+                            /* Caso a validação do Joi não encontre nenhum erro, substituimos o que nos foi enviado pelo o que o Joi modificou.
+                               Ou seja, caso haja validação de lowercase etc o objeto 'data' terá os dados já sanitizados e formatados. */
+                            body = data;
                             next();
                         }
                     }

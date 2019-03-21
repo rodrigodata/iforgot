@@ -1,5 +1,6 @@
 /* Importação de dependencias */
 const Telegraf = require("telegraf");
+const Session = require("telegraf/session");
 const Mongoose = require("mongoose");
 /* Precisamos importar o contexto dos models para conseguir efetuar consultas ao banco de dados */
 require("../models/index");
@@ -12,11 +13,13 @@ const TelegramMiddlewareValidation = require("../middlewares/TelegramValidation"
 
 /* Importação de Models */
 const Servico = Mongoose.model("Servicos");
+const Senha = Mongoose.model("Senha");
 
 const Comandos = {
   bot: {},
   registarMiddlewares() {
-    return this.bot.use(TelegramMiddlewareValidation());
+    this.bot.use(Session());
+    this.bot.use(TelegramMiddlewareValidation());
   },
   registrarComandos() {
     this.bot.start(context => {
@@ -36,19 +39,36 @@ const Comandos = {
         );
 
       /* Efetuar busca por serviço. */
-      Servico.findOne({ nome: args[0] }, function(err, servico) {
+      Servico.findOne({ nome: args[0] }, function(err, registroServico) {
         if (err)
           return context.reply(
             `Ops.. ocorreu um erro ao buscar o serviço '${
               args[0] && args[0] != "" ? args[0].toUpperCase() : ""
             }'`
           );
-        if (!servico || !servico.nome)
+        if (!registroServico || !registroServico.nome)
           return context.reply(
             `Nenhum serviço encontrado. Serviço informado '${args[0]}'`
           );
 
-        return context.reply(servico.nome);
+        Senha.findOne({ servico: registroServico._id }, function(
+          err,
+          registroSenha
+        ) {
+          if (!err && registroSenha) {
+            let senha = registroSenha.descriptografarSenha();
+            console.log(senha);
+            return context.replyWithHTML(`
+              <b>Serviço:</b> ${
+                registroServico.nome
+              }\n<b>Senha expira:</b> 05/05/2019 às 16:18\n<b>Senha:</b> ${senha}
+            `);
+          } else {
+            return context.reply(
+              `Não há senha cadastrada para o serviço '${registroServico.nome}'`
+            );
+          }
+        });
       });
     });
   },

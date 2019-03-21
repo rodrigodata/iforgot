@@ -1,10 +1,13 @@
 /* Middleware responsável em formatar comando e texto informado */
-const comandoArgumentos = () => (ctx, next) => {
+const comandoArgumentos = () => async (ctx, next) => {
   /* Validamos o tipo de argumento informado */
   if (
     ctx.updateType === "message" &&
     ctx.updateSubTypes.indexOf("text") != -1
   ) {
+    //let getChat = await ctx.getChat();
+    console.log(ctx.session);
+
     const texto = ctx.update.message.text.toLowerCase();
     if (texto.startsWith("/")) {
       const match = texto.match(/^\/([^\s]+)\s?(.+)?/);
@@ -24,6 +27,8 @@ const comandoArgumentos = () => (ctx, next) => {
         commandClient,
         args
       };
+
+      ctx.session.lastMessage = args[0];
     }
   }
   return next();

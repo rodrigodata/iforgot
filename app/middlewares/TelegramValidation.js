@@ -5,12 +5,12 @@ const comandoArgumentos = () => async (ctx, next) => {
     ctx.updateType === "message" &&
     ctx.updateSubTypes.indexOf("text") != -1
   ) {
-    //let getChat = await ctx.getChat();
-    console.log(ctx.session);
+    let texto = ctx.update.message.text;
+    let lastMessage = ctx.session.lastMessage;
 
-    const texto = ctx.update.message.text.toLowerCase();
     if (texto.startsWith("/")) {
       const match = texto.match(/^\/([^\s]+)\s?(.+)?/);
+      texto = texto.toLowerCase();
       let args = [];
       let commandClient;
       if (match !== null) {
@@ -23,12 +23,28 @@ const comandoArgumentos = () => async (ctx, next) => {
       }
 
       ctx.state.command = {
+        lastMessage: ctx.session.lastMessage ? ctx.session.lastMessage : {},
         raw: texto,
         commandClient,
         args
       };
 
-      ctx.session.lastMessage = args[0];
+      ctx.session.lastMessage = {
+        message: args[0],
+        raw: texto,
+        command: commandClient
+      };
+    } else if (
+      lastMessage &&
+      lastMessage.message &&
+      lastMessage.raw.startsWith("/")
+    ) {
+      console.log("Ultima mensagem foi um comando valido");
+      ctx.state.command = {
+        message: texto
+      };
+    } else {
+      return ctx.reply("Por favor, insira um comando inválido.");
     }
   }
   return next();

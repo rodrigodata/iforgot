@@ -17,7 +17,7 @@ var SenhaSchema = new Mongoose.Schema(
       type: String,
       required: [true, "não pode ser vazio"]
     },
-    idServico: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Servicos" }],
+    servico: { type: Mongoose.Schema.Types.ObjectId, ref: "Servicos" },
     mfa: {
       type: Boolean,
       required: [true, "não pode ser vazio"]
@@ -41,6 +41,7 @@ SenhaSchema.methods.formataRespostaJSON = function() {
   return {
     usuario: this.usuario,
     descricao: this.descricao,
+    servico: this.servico,
     mfa: this.mfa,
     tipoNotificacao: this.tipoNotificacao,
     descricaoNotificacao: this.descricaoNotificacao

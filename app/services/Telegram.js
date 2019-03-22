@@ -1,5 +1,6 @@
 /* Importação de dependencias */
 const Telegraf = require("telegraf");
+const Session = require("telegraf/session");
 const Mongoose = require("mongoose");
 /* Precisamos importar o contexto dos models para conseguir efetuar consultas ao banco de dados */
 require("../models/index");
@@ -12,11 +13,13 @@ const TelegramMiddlewareValidation = require("../middlewares/TelegramValidation"
 
 /* Importação de Models */
 const Servico = Mongoose.model("Servicos");
+const Senha = Mongoose.model("Senha");
 
 const Comandos = {
   bot: {},
   registarMiddlewares() {
-    return this.bot.use(TelegramMiddlewareValidation());
+    this.bot.use(Session());
+    this.bot.use(TelegramMiddlewareValidation());
   },
   registrarComandos() {
     this.bot.start(context => {
@@ -26,29 +29,103 @@ const Comandos = {
   },
   consultarServico() {
     return this.bot.command("servico", context => {
-      /* Descontrução do objeto. */
-      const { raw, commandClient, args } = context.state.command;
+      const { raw, args, lastMessage } = context.state.command;
+      console.log(lastMessage);
 
-      /* Validação se algum comando foi informado. */
       if (!args[0] || args[0] == "")
         return context.reply(
           `Nenhum comando informado. Por favor, tente novamente.\nComando informado '${raw}'`
         );
 
-      /* Efetuar busca por serviço. */
-      Servico.findOne({ nome: args[0] }, function(err, servico) {
+      return context.reply("Por favor, informe sua senha master..");
+    });
+  },
+  validarSenhaMaster() {
+    return this.bot.on("text", function(context) {
+      const { message } = context.state.command;
+      const lastMessage = context.session.lastMessage;
+      const servico = lastMessage.message;
+
+      Servico.findOne({ nome: servico }, function(err, registroServico) {
         if (err)
           return context.reply(
             `Ops.. ocorreu um erro ao buscar o serviço '${
               args[0] && args[0] != "" ? args[0].toUpperCase() : ""
             }'`
           );
-        if (!servico || !servico.nome)
+        if (!registroServico || !registroServico.nome)
           return context.reply(
             `Nenhum serviço encontrado. Serviço informado '${args[0]}'`
           );
 
-        return context.reply(servico.nome);
+        Senha.findOne({ servico: registroServico._id }, function(
+          err,
+          registroSenha
+        ) {
+          if (!err && registroSenha) {
+            let senha = registroSenha.descriptografarSenha();
+            if (senha == message) {
+              delete context.session.lastMessage;
+              return context.replyWithHTML(`
+              <b>Serviço:</b> ${
+                registroServico.nome
+              }\n<b>Senha expira:</b> 05/05/2019 às 16:18\n<b>Senha:</b> ${senha}
+            `);
+            } else {
+              return context.reply(
+                "Senha incorreta. Por favor, tente novamente!"
+              );
+            }
+          } else {
+            delete context.session.lastMessage;
+            return context.reply(
+              `Não há senha cadastrada para o serviço '${registroServico.nome}'`
+            );
+          }
+        });
+      });
+    });
+  },
+  buscarInformacoesServico() {
+    /* Descontrução do objeto. */
+    const { raw, commandClient, args, lastMessage } = context.state.command;
+
+    /* Validação se algum comando foi informado. */
+    if (!args[0] || args[0] == "")
+      return context.reply(
+        `Nenhum comando informado. Por favor, tente novamente.\nComando informado '${raw}'`
+      );
+
+    /* Efetuar busca por serviço. */
+    Servico.findOne({ nome: args[0] }, function(err, registroServico) {
+      if (err)
+        return context.reply(
+          `Ops.. ocorreu um erro ao buscar o serviço '${
+            args[0] && args[0] != "" ? args[0].toUpperCase() : ""
+          }'`
+        );
+      if (!registroServico || !registroServico.nome)
+        return context.reply(
+          `Nenhum serviço encontrado. Serviço informado '${args[0]}'`
+        );
+
+      Senha.findOne({ servico: registroServico._id }, function(
+        err,
+        registroSenha
+      ) {
+        if (!err && registroSenha) {
+          let senha = registroSenha.descriptografarSenha();
+          console.log(senha);
+          return context.replyWithHTML(`
+             <b>Serviço:</b> ${
+               registroServico.nome
+             }\n<b>Senha expira:</b> 05/05/2019 às 16:18\n<b>Senha:</b> ${senha}
+           `);
+        } else {
+          return context.reply(
+            `Não há senha cadastrada para o serviço '${registroServico.nome}'`
+          );
+        }
       });
     });
   },
@@ -59,6 +136,8 @@ const Comandos = {
     this.registarMiddlewares();
     /* Registra todos os comandos usados pelo o nosso bot. */
     this.registrarComandos();
+    /* Registrar hook para escutar texto puro. */
+    this.validarSenhaMaster();
     /* Inicia nosso bot. */
     this.bot.launch();
     /* Info */

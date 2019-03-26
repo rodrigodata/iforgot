@@ -1,3 +1,4 @@
 /* Importação dos models */
-require('./Senha');
-require('./Servicos');
+require("./Senha");
+require("./Servico");
+require("./Usuario");

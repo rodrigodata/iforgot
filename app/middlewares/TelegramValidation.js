@@ -5,8 +5,12 @@ const comandoArgumentos = () => async (ctx, next) => {
     ctx.updateType === "message" &&
     ctx.updateSubTypes.indexOf("text") != -1
   ) {
+    /* Texto enviado pelo usuario. */
     let texto = ctx.update.message.text;
+    /* Busca ultima mensagem enviada pelo usuario, caso exista. */
     let lastMessage = ctx.session.lastMessage;
+    /* Busca dados sobre o chat. */
+    let chat = await ctx.getChat();
 
     if (texto.startsWith("/")) {
       const match = texto.match(/^\/([^\s]+)\s?(.+)?/);
@@ -24,6 +28,7 @@ const comandoArgumentos = () => async (ctx, next) => {
 
       ctx.state.command = {
         lastMessage: ctx.session.lastMessage ? ctx.session.lastMessage : {},
+        chat: chat,
         raw: texto,
         commandClient,
         args
@@ -39,8 +44,8 @@ const comandoArgumentos = () => async (ctx, next) => {
       lastMessage.message &&
       lastMessage.raw.startsWith("/")
     ) {
-      console.log("Ultima mensagem foi um comando valido");
       ctx.state.command = {
+        chat: chat,
         message: texto
       };
     } else {

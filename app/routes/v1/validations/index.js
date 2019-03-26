@@ -1,7 +1,7 @@
-const SenhaSchemaValidation = require('./evento/Senha');
-const ServicosSchemaValidation = require('./servicos/Servicos');
+const SenhaSchemaValidation = require("./evento/Senha");
+const ServicoSchemaValidation = require("./servico/Servico");
 
 module.exports = {
-    ...SenhaSchemaValidation,
-    ...ServicosSchemaValidation
+  ...SenhaSchemaValidation,
+  ...ServicoSchemaValidation
 };

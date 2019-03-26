@@ -2,6 +2,7 @@
 const Telegraf = require("telegraf");
 const Session = require("telegraf/session");
 const Mongoose = require("mongoose");
+
 /* Precisamos importar o contexto dos models para conseguir efetuar consultas ao banco de dados */
 require("../models/index");
 
@@ -12,8 +13,9 @@ const Contants = require("../constants/app");
 const TelegramMiddlewareValidation = require("../middlewares/TelegramValidation");
 
 /* Importação de Models */
-const Servico = Mongoose.model("Servicos");
+const Servico = Mongoose.model("Servico");
 const Senha = Mongoose.model("Senha");
+const Usuario = Mongoose.model("Usuario");
 
 const Comandos = {
   bot: {},
@@ -30,7 +32,6 @@ const Comandos = {
   consultarServico() {
     return this.bot.command("servico", context => {
       const { raw, args, lastMessage } = context.state.command;
-      console.log(lastMessage);
 
       if (!args[0] || args[0] == "")
         return context.reply(
@@ -42,7 +43,7 @@ const Comandos = {
   },
   validarSenhaMaster() {
     return this.bot.on("text", function(context) {
-      const { message } = context.state.command;
+      const { message, chat } = context.state.command;
       const lastMessage = context.session.lastMessage;
       const servico = lastMessage.message;
 
@@ -58,30 +59,47 @@ const Comandos = {
             `Nenhum serviço encontrado. Serviço informado '${args[0]}'`
           );
 
-        Senha.findOne({ servico: registroServico._id }, function(
-          err,
-          registroSenha
+        Usuario.findOne({ usuario: chat.username }).then(async function(
+          usuarioMaster
         ) {
-          if (!err && registroSenha) {
-            let senha = registroSenha.descriptografarSenha();
-            if (senha == message) {
-              delete context.session.lastMessage;
-              return context.replyWithHTML(`
-              <b>Serviço:</b> ${
-                registroServico.nome
-              }\n<b>Senha expira:</b> 05/05/2019 às 16:18\n<b>Senha:</b> ${senha}
-            `);
+          if (usuarioMaster == null || usuarioMaster == undefined)
+            return context.reply(
+              "O seu usuário do telegram não possui vinculo. Favor verificar!"
+            );
+
+          /* */
+          Senha.findOne({ servico: registroServico._id }, function(
+            errRegistro,
+            registroSenha
+          ) {
+            if (!errRegistro && registroSenha) {
+              /* Precisa implementar comparacao por salt. */
+              let isMasterPassword = usuarioMaster.verificarSenha(message);
+
+              if (isMasterPassword) {
+                /* */
+                delete context.session.lastMessage;
+                /* */
+                let senhaServico = registroSenha.descriptografarSenha();
+                return context.replyWithHTML(`
+                <b>Serviço:</b> ${
+                  registroServico.nome
+                }\n<b>Senha expira:</b> 05/05/2019 às 16:18\n<b>Senha:</b> ${senhaServico}
+              `);
+              } else {
+                return context.reply(
+                  "Senha incorreta. Por favor, tente novamente!"
+                );
+              }
             } else {
+              delete context.session.lastMessage;
               return context.reply(
-                "Senha incorreta. Por favor, tente novamente!"
+                `Não há senha cadastrada para o serviço '${
+                  registroServico.nome
+                }'`
               );
             }
-          } else {
-            delete context.session.lastMessage;
-            return context.reply(
-              `Não há senha cadastrada para o serviço '${registroServico.nome}'`
-            );
-          }
+          });
         });
       });
     });

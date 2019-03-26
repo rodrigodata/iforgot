@@ -3,7 +3,7 @@ const Mongoose = require("mongoose");
 
 /* Importação Models */
 const Senha = Mongoose.model("Senha");
-const Servico = Mongoose.model("Servicos");
+const Servico = Mongoose.model("Servico");
 
 /* Controller responsável pela geração de senha */
 exports.criar = function(req, res, next) {
@@ -11,7 +11,7 @@ exports.criar = function(req, res, next) {
 
   /* Verificar se o serviço informado existe */
   Servico.findOne({ nome: body.servico }, function(err, srv) {
-    if (!err & srv) {
+    if ((!err || err == null) && (srv && srv._id)) {
       let senha = new Senha();
 
       /* Gera Salt e Hash */

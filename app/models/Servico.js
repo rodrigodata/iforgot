@@ -2,11 +2,7 @@
 const Mongoose = require("mongoose");
 const UniqueValidator = require("mongoose-unique-validator");
 
-/* Importação de constants */
-const AppConstants = require("../constants/app");
-
-/* */
-var ServicosSchema = new Mongoose.Schema(
+const ServicoSchema = new Mongoose.Schema(
   {
     nome: {
       type: String,
@@ -20,16 +16,16 @@ var ServicosSchema = new Mongoose.Schema(
 );
 
 /* Registra plugin para o model. */
-ServicosSchema.plugin(UniqueValidator, { mensagem: "já existe" });
+ServicoSchema.plugin(UniqueValidator, { mensagem: "já existe" });
 
 /* Sanitiza nome de Serviço para não conter acentuações. */
-ServicosSchema.methods.removerAcentuacao = function() {
+ServicoSchema.methods.removerAcentuacao = function() {
   return this.nome.replace(/[\u0300-\u036f]/g, "");
 };
 
 /* Sanitiza nome de Serviço para não conter espaços e pontuações. */
-ServicosSchema.methods.removerEspacoPontuacao = function() {
+ServicoSchema.methods.removerEspacoPontuacao = function() {
   return this.nome.replace(/[^a-zA-Z0-9]/g, "");
 };
 
-Mongoose.model("Servicos", ServicosSchema);
+Mongoose.model("Servico", ServicoSchema);

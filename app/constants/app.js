@@ -2,7 +2,7 @@ const DB_HOST = process.env.IFORGOT_DB_HOST;
 const SECRET_API = process.env.SECRET_API;
 const DICIONARIO = process.env.IFORGOT_DICTIONARY;
 const TELEGRAM_TOKEN = process.env.IFORGOT_TELEGRAM_TOKEN;
-const SENHA_TAMANHO = 15;
+const SENHA_TAMANHO = 12;
 
 module.exports = {
   DB_HOST,

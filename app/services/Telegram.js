@@ -20,18 +20,24 @@ const Usuario = Mongoose.model("Usuario");
 const Comandos = {
   bot: {},
   registarMiddlewares() {
+    /* Sessão de Usuário para cachear ultima mensagem. */
     this.bot.use(Session());
+
+    /* Middleware responsável pela formatação do contexto. */
     this.bot.use(TelegramMiddlewareValidation());
   },
   registrarComandos() {
+    /* Inicia a conversa com o usuário. */
     this.bot.start(context => {
       context.reply("Hello Dave");
     });
+
+    /* Registra comando /servico. */
     this.consultarServico();
   },
   consultarServico() {
     return this.bot.command("servico", context => {
-      const { raw, args, lastMessage } = context.state.command;
+      const { raw, args } = context.state.command;
 
       if (!args[0] || args[0] == "")
         return context.reply(
@@ -105,8 +111,8 @@ const Comandos = {
     });
   },
   buscarInformacoesServico() {
-    /* Descontrução do objeto. */
-    const { raw, commandClient, args, lastMessage } = context.state.command;
+    /* Descontrução de objeto. */
+    const { raw, args } = context.state.command;
 
     /* Validação se algum comando foi informado. */
     if (!args[0] || args[0] == "")
@@ -133,7 +139,6 @@ const Comandos = {
       ) {
         if (!err && registroSenha) {
           let senha = registroSenha.descriptografarSenha();
-          console.log(senha);
           return context.replyWithHTML(`
              <b>Serviço:</b> ${
                registroServico.nome
@@ -164,29 +169,3 @@ const Comandos = {
 };
 
 module.exports = Comandos;
-/**
-
-*******CONSULTA SERVIÇO*******
->/servico twitter 
->Por favor, informe sua senha master..
->isi*8965d)
- 
-    Serviço: Twitter
-    Senha Expira: 05/05/2019 às 16:18
-    MFA: true
-    Senha: 9Hgjfd&83$
-    Data Criação: 11/12/2018 às 16:18
-    Data Ultima Atualização: 05/02/2019 às 16:18
-
-
-
-*******RESETAR SENHA DE SERVIÇO*******
->/resetar twitter
->Por favor, informe sua senha master..
->isi*8965d)
->Tem certeza que deseja altera a senha para o serviço TWITTER ?
->sim
->Senha alterada com sucesso! Nova senha JfdbfioOD830*
-
-
-*/

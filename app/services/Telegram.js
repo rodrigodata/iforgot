@@ -18,7 +18,6 @@ const Senha = Mongoose.model("Senha");
 const Usuario = Mongoose.model("Usuario");
 
 const Comandos = {
-  bot: {},
   registarMiddlewares() {
     /* Sessão de Usuário para cachear ultima mensagem. */
     this.bot.use(Session());
@@ -151,6 +150,9 @@ const Comandos = {
         }
       });
     });
+  },
+  enviarMensagem(chatId, mensagem) {
+    return this.bot.telegram.sendMessage(chatId, mensagem);
   },
   iniciarBot() {
     /* Cria uma nova instancia do bot. */

@@ -6,6 +6,12 @@ require("moment/min/locales");
 moment.locale("pt-BR");
 
 const DateUtils = {
+  formatarDataHorarioBrasil(date) {
+    return moment(date).format();
+  },
+  buscarDataHorarioBrasil() {
+    return moment().format();
+  },
   adicionarVencimentoDataHorario(number, type) {
     return moment()
       .add(number, type)

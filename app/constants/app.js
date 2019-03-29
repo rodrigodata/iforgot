@@ -10,11 +10,15 @@ const VENCIMENTO_SENHA = {
   TIPO: "months"
 };
 
+/* Id do chat do telegram */
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
 module.exports = {
   DB_HOST,
   DICIONARIO,
   SECRET_API,
   TELEGRAM_TOKEN,
   SENHA_TAMANHO,
-  VENCIMENTO_SENHA
+  VENCIMENTO_SENHA,
+  TELEGRAM_CHAT_ID
 };

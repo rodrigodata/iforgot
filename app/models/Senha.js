@@ -2,7 +2,7 @@
 const Mongoose = require("mongoose");
 
 /* Importação de Plugins */
-const SenhaPlugin = require("./plugins/Senha.plugin");
+const SenhaPlugin = require("../plugins/Senha.plugin");
 
 /* Schema referente a criacao de uma senha */
 var SenhaSchema = new Mongoose.Schema(

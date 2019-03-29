@@ -1,8 +1,10 @@
-/* */
+/* Importação de dependencias */
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
+
+/* Importação Serviço do Telegram. Com ele, iniciamos o bot juntamente com a nossa aplicação. */
 const Telegram = require("./app/services/Telegram");
 
 /* Configuração Express */

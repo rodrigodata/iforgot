@@ -24,7 +24,7 @@ const Cron = {
 
     /* Iterar sobre o array e para cada um, enviar uma notificação para o telegram. */
     listagemSenhas.forEach(function(value) {
-      Servico.findById(value.servico, function(err, servico) {
+      Servico.findById(value.servico, async function(err, servico) {
         if (err) {
           console.log(err);
           return err;
@@ -35,7 +35,8 @@ const Cron = {
           } venceu em ${DateUtils.formatarDataHorarioBrasil(
             value.vencimento
           )}. Por favor, atualize sua senha.`;
-          return Telegram.enviarMensagem(Constants.TELEGRAM_CHAT_ID, mensagem);
+
+          return Telegram.enviarMensagem(value.idChatTelegram, mensagem);
         }
       }).catch(function(err) {
         console.log(err);

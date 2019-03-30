@@ -3,7 +3,7 @@ const CronJob = require("cron").CronJob;
 
 /* Job que verifica se há alguma senha vencida. */
 const SenhasVencidasJob = new CronJob(
-  "* * * * *",
+  "00 00 12 * * 0-6",
   function() {
     /* Importação Serviço Senhas Vencidas */
     const SenhasVencidas = require("./SenhasVencidas");

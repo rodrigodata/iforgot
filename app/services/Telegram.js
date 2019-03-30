@@ -9,6 +9,9 @@ require("../models/index");
 /* Importação de Constants da aplicação */
 const Contants = require("../constants/app");
 
+/* */
+const DateUtils = require("../lib/DateUtils");
+
 /* Importação de Middleware */
 const TelegramMiddlewareValidation = require("../middlewares/TelegramValidation");
 
@@ -27,8 +30,8 @@ const Comandos = {
   },
   registrarComandos() {
     /* Inicia a conversa com o usuário. */
-    this.bot.start(context => {
-      context.reply("Hello Dave");
+    this.bot.start(async context => {
+      return context.reply("Hello, Dave. You're looking well today.");
     });
 
     /* Registra comando /servico. */
@@ -86,10 +89,15 @@ const Comandos = {
                 delete context.session.lastMessage;
                 /* */
                 let senhaServico = registroSenha.descriptografarSenha();
+                let senhaVencimento = registroSenha.vencimento
+                  ? DateUtils.formatarDataHorarioBrasil(
+                      registroSenha.vencimento
+                    )
+                  : "";
                 return context.replyWithHTML(`
                 <b>Serviço:</b> ${
                   registroServico.nome
-                }\n<b>Senha expira:</b> 05/05/2019 às 16:18\n<b>Senha:</b> ${senhaServico}
+                }\n<b>Senha expira:</b> ${senhaVencimento}\n<b>Senha:</b> ${senhaServico}
               `);
               } else {
                 return context.reply(

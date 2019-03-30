@@ -17,6 +17,7 @@ exports.criar = function(req, res, next) {
       /* Gera Salt e Hash */
       senha.geradorSenha();
       senha.gerarVencimentoSenha();
+      senha.idChatTelegram = body.idChatTelegram;
       senha.mfa = body.mfa;
       senha.usuario = body.usuario;
       senha.descricao = body.descricao;

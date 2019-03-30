@@ -44,6 +44,10 @@ var SenhaSchema = new Mongoose.Schema(
     },
     descricaoNotificacao: {
       type: String
+    },
+    idChatTelegram: {
+      type: Number,
+      required: [true, "não pode ser vazio"]
     }
   },
   { timestamps: true }
@@ -61,7 +65,8 @@ SenhaSchema.methods.formataRespostaJSON = function() {
     servico: this.servico,
     mfa: this.mfa,
     tipoNotificacao: this.tipoNotificacao,
-    descricaoNotificacao: this.descricaoNotificacao
+    descricaoNotificacao: this.descricaoNotificacao,
+    idChatTelegram: this.idChatTelegram
   };
 };
 

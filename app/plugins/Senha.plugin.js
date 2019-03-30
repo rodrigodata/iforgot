@@ -3,7 +3,7 @@ const CryptoJS = require("crypto-js");
 const Crypto = require("crypto");
 
 /* Importação de constants */
-const AppConstants = require("../../constants/app");
+const AppConstants = require("../constants/app");
 
 module.exports = exports = function(Schema) {
   /* */

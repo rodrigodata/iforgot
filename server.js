@@ -15,6 +15,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
+/* */
 /* Importacao conexao banco de dados */
 require("./database");
 
@@ -30,6 +32,6 @@ Telegram.iniciarBot();
 /* Inicia Cron */
 Cron.iniciarCron();
 
-var server = app.listen(process.env.PORT || 3000, function() {
+var server = app.listen(process.env.PORT || 3000, function () {
   console.log("Escutando na porta " + server.address().port);
 });

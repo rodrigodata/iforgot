@@ -64,7 +64,6 @@ SenhaSchema.methods.formataRespostaJSON = function () {
     vencimento: this.vencimento,
     servico: this.servico,
     mfa: this.mfa,
-    ping: false,
     tipoNotificacao: this.tipoNotificacao,
     descricaoNotificacao: this.descricaoNotificacao,
     idChatTelegram: this.idChatTelegram

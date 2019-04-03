@@ -57,13 +57,14 @@ var SenhaSchema = new Mongoose.Schema(
 SenhaSchema.plugin(SenhaPlugin);
 
 /* ATENÇÃO: EVITAR USO DE ARROW FUNCTIONS. VER MAIS DETALHES EM https://github.com/getify/You-Dont-Know-JS/blob/master/scope%20&%20closures/apC.md#appendix-c-lexical-this */
-SenhaSchema.methods.formataRespostaJSON = function() {
+SenhaSchema.methods.formataRespostaJSON = function () {
   return {
     usuario: this.usuario,
     descricao: this.descricao,
     vencimento: this.vencimento,
     servico: this.servico,
     mfa: this.mfa,
+    ping: true,
     tipoNotificacao: this.tipoNotificacao,
     descricaoNotificacao: this.descricaoNotificacao,
     idChatTelegram: this.idChatTelegram
@@ -71,7 +72,7 @@ SenhaSchema.methods.formataRespostaJSON = function() {
 };
 
 /* Método responsável em gerar data de vencimento de senha a partir de configuração da aplicação. Tempo padrão: 3 meses à partir da sua criação. */
-SenhaSchema.methods.gerarVencimentoSenha = function() {
+SenhaSchema.methods.gerarVencimentoSenha = function () {
   this.vencimento = DateUtils.adicionarVencimentoDataHorario(
     Constants.VENCIMENTO_SENHA.QUANTIDADE,
     Constants.VENCIMENTO_SENHA.TIPO

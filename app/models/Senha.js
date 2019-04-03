@@ -58,6 +58,7 @@ SenhaSchema.plugin(SenhaPlugin);
 
 /* ATENÇÃO: EVITAR USO DE ARROW FUNCTIONS. VER MAIS DETALHES EM https://github.com/getify/You-Dont-Know-JS/blob/master/scope%20&%20closures/apC.md#appendix-c-lexical-this */
 SenhaSchema.methods.formataRespostaJSON = function () {
+
   return {
     usuario: this.usuario,
     descricao: this.descricao,

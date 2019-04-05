@@ -12,7 +12,8 @@ router.use(
   "/",
   require("./evento"),
   require("./servico"),
-  require("./usuario")
+  require("./usuario"),
+  require('./jobs')
 );
 
 module.exports = router;

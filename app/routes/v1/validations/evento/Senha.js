@@ -10,7 +10,8 @@ const CriarSenhaSchema = Joi.object({
   servico: Joi.string().required(),
   mfa: Joi.boolean().required(),
   tipoNotificacao: Joi.number(),
-  descricaoNotificacao: Joi.string()
+  descricaoNotificacao: Joi.string(),
+  idChatTelegram: Joi.number()
 });
 
 module.exports = {
